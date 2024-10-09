@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidsregistrering</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Tidsregistrering</h1>
+                <div class="action-buttons">
+                    <button id="saveDataBtn" aria-label="Gem data">Gem data</button>
+                    <button id="loadDataBtn" aria-label="Indlæs data">Indlæs data</button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Tilføj dette nye afsnit lige efter header -->
+        <section class="settings">
+            <div class="setting-item">
+                <label for="weeklyHours">Ugentlige arbejdstimer:</label>
+                <input type="number" id="weeklyHours" min="0" max="168" step="0.5" value="37" aria-describedby="weeklyHoursDescription">
+                <span id="weeklyHoursDescription" class="sr-only">Indtast antal ugentlige arbejdstimer</span>
+            </div>
+            <div class="setting-item">
+                <label for="startDate">Gyldig fra dato:</label>
+                <input type="date" id="startDate" aria-describedby="startDateDescription">
+                <span id="startDateDescription" class="sr-only">Vælg startdato for tidsregistrering</span>
+            </div>
+        </section>
+        
+        <main>
+            <form id="registrationForm">
+                <div class="form-grid">
+                    <div class="calendar-container">
+                        <div id="calendar">
+                            <div id="calendarHeader">
+                                <button type="button" id="prevMonth" aria-label="Forrige måned">&lt;</button>
+                                <span id="currentMonth"></span>
+                                <button type="button" id="nextMonth" aria-label="Næste måned">&gt;</button>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>M</th><th>T</th><th>O</th><th>T</th><th>F</th><th>L</th><th>S</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="calendarBody"></tbody>
+                            </table>
+                        </div>
+                        <input type="hidden" id="date" required>
+                    </div>
+                    
+                    <div class="form-inputs">
+                        <div class="registration-type">
+                            <fieldset>
+                                <legend>Type:</legend>
+                                <label><input type="radio" name="registrationType" value="arbejde" checked> Arbejde</label>
+                                <label><input type="radio" name="registrationType" value="sygdom"> Sygdom</label>
+                                <label><input type="radio" name="registrationType" value="ferie"> Ferie</label>
+                                <label><input type="radio" name="registrationType" value="andet"> Andet</label>
+                            </fieldset>
+                            <!-- Input-feltet "otherReason" er nu fjernet herfra -->
+                        </div>
+                        
+                        <div class="time-inputs">
+                            <div class="time-input">
+                                <label for="startTime">Start:</label>
+                                <input type="time" id="startTime" value="08:00" required>
+                            </div>
+                            
+                            <div class="time-input">
+                                <label for="endTime">Slut:</label>
+                                <input type="time" id="endTime" value="15:24" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit">Tilføj</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="secondary-grid">
+                <section class="flex-time">
+                    <h2>Flex-tid oversigt</h2>
+                    <p>Akkumuleret flex-tid: <span id="flexTime">0</span> timer</p>
+                </section>
+            </div>
+
+            <section class="overview">
+                <h2>Oversigt</h2>
+                <div class="table-container">
+                    <table id="registrationsTable">
+                        <thead>
+                            <tr>
+                                <th>Dato</th>
+                                <th>Ankomst</th>
+                                <th>Afgang</th>
+                                <th>Type</th>
+                                <th>Arbejdstid</th>
+                                <th>Forventet</th>
+                                <th>Fleks</th>
+                                <th>Handlinger</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Registreringer vil blive indsat her dynamisk -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div id="weeklyOverviewModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Ugentlig oversigt</h2>
+                    <table id="weeklyOverviewTable">
+                        <thead>
+                            <tr>
+                                <th>Uge</th>
+                                <th>Arbejde</th>
+                                <th>Sygdom</th>
+                                <th>Ferie</th>
+                                <th>Andet</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ugentlig oversigt vil blive indsat her dynamisk -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Tilføj denne linje lige før den eksisterende script tag -->
+    <script src="calendar-functions.js"></script>
+    <script src="registration-handlers.js"></script>
+    <script src="flex-time-calculator.js"></script>
+    <script src="utility-functions.js"></script>
+    <script src="data-handlers.js"></script>
+    <script src="script.js"></script>
+
+    <!-- Tilføj dette lige før </body> tagget -->
+    <div id="csvModal" class="modal" aria-labelledby="csvModalTitle" aria-modal="true" role="dialog">
+        <div class="modal-content">
+            <h2 id="csvModalTitle">Vælg CSV-fil</h2>
+            <p>Der er ikke valgt nogen CSV-fil. Vælg venligst en fil for at indlæse data.</p>
+            <input type="file" id="csvFileInput" accept=".csv" aria-describedby="csvFileDescription">
+            <span id="csvFileDescription" class="sr-only">Vælg en CSV-fil til at indlæse data</span>
+            <button id="confirmCsvUpload">Indlæs fil</button>
+            <button id="cancelCsvUpload">Annuller</button>
+        </div>
+    </div>
+</body>
+</html>
